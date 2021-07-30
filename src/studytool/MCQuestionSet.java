@@ -20,11 +20,12 @@ class MCQuestionSet {
             Scanner read = new Scanner(new File(filename));
             while (read.hasNextLine()) {
                 int choiceCount = Integer.parseInt(read.nextLine());
+                String question = read.nextLine();
                 String[] choices = new String[choiceCount];
                 for (int i = 0; i < choiceCount; i++) {
                     choices[i] = read.nextLine();
                 }
-                questionSet.add(new MCQuestion(choices[0], choices));
+                questionSet.add(new MCQuestion(question, choices));
             }
             shuffleQuestions(questionSet);
             for (MCQuestion question : questionSet) {

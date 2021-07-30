@@ -7,11 +7,13 @@ import java.util.Random;
  * @author John
  */
 class MCQuestion {
+    private String question;
     private String answer;
     private String[] choices;
     
-    MCQuestion(String answer, String[] choices) {
-        this.answer = answer;
+    MCQuestion(String question, String[] choices) {
+        this.question = question;
+        this.answer = choices[0];
         this.choices = choices;
         shuffleChoices();
     }
