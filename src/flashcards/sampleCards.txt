@@ -11,4 +11,4 @@ Front
 Back
 
 A gameshow where participants answer questions
-What is Jeapardy!
+What is "Jeapardy!"

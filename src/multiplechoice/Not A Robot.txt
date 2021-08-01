@@ -1,0 +1,24 @@
+2
+Are you a robot?
+Yes
+No
+
+2
+Are you a machine?
+Yes
+No
+
+2
+Are you a made of metal?
+Yes
+No
+
+2
+Are you a alive?
+Yes
+No
+
+2
+What is your favorite number system?
+Binary
+Decimal

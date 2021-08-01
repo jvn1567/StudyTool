@@ -1,0 +1,24 @@
+3
+How many strings does a standard guitar have?
+6
+4
+12
+
+4
+What is standard tuning?
+EBGDAE
+CGCGCE
+DBGDAE
+ABCDEF
+
+2
+Who is not a famous guitarist?
+Sean Bean
+Jimi Hendrix
+
+4
+Which is not a song by Led Zeppelin?
+Purple Haze
+Stairway to Heaven
+Over the Hills and Far Away
+Black Dog
