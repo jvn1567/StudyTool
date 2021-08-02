@@ -42,23 +42,24 @@ public class StudyTool extends Application {
         parentPane.setPadding(new Insets(20, 20, 20, 20));
         //card topic menu
         mainMenuButtons[0].setOnAction(e->{
-            parentPane.getChildren().remove(topicMenuQuiz);
+            parentPane.getChildren().clear();
+            parentPane.setTop(mainMenu);
             parentPane.setCenter(topicMenuCards);
             parentPane.setRight(selectionMenu);
             btnStart.setText("Review");
         });
         //quiz topic menu
         mainMenuButtons[1].setOnAction(e->{
-            parentPane.getChildren().remove(topicMenuCards);
+            parentPane.getChildren().clear();
+            parentPane.setTop(mainMenu);
             parentPane.setCenter(topicMenuQuiz);
             parentPane.setRight(selectionMenu);
             btnStart.setText("Start Quiz");
         });
         //stats menu
         mainMenuButtons[2].setOnAction(e->{
-            parentPane.getChildren().remove(topicMenuCards);
-            parentPane.getChildren().remove(topicMenuQuiz);
-            parentPane.getChildren().remove(selectionMenu);
+            parentPane.getChildren().clear();
+            parentPane.setTop(mainMenu);
         });
         //start button
         btnStart.setOnAction(e->{
@@ -71,12 +72,12 @@ public class StudyTool extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
+    
     private FlowPane setMainMenu() {
         FlowPane mainMenu = new FlowPane();
         mainMenu.setAlignment(Pos.CENTER);
         mainMenuButtons = new Button[3];
-        String[] buttonText = {"Flashcards", "Quizes", "Stats"};
+        String[] buttonText = {"Flashcards", "Quizes", "Scores"};
         for (int i = 0; i < mainMenuButtons.length; i++) {
             mainMenuButtons[i] = new Button();
             FlowPane.setMargin(mainMenuButtons[i], new Insets(10, 10, 30, 10));
@@ -88,7 +89,7 @@ public class StudyTool extends Application {
     }
 
     private ListView setTopicMenu(String folderExtension) {
-        //add all .txt files to the list of topics
+        //add all .txt files in the passed-in folder to the list of topics
         ListView topicMenu = new ListView();
         ObservableList<String> topicList = FXCollections.observableArrayList();
         File folder = new File(folderExtension);
@@ -101,8 +102,12 @@ public class StudyTool extends Application {
             }
         }
         topicMenu.setItems(topicList);
-        //set ListView font size
-        topicMenu.setCellFactory(cell -> {
+        setCellFormat(topicMenu);
+        return topicMenu;
+    }
+    
+    private void setCellFormat(ListView listView) {
+        listView.setCellFactory(cell -> {
             return new ListCell<String>() {
                 @Override
                 protected void updateItem(String item, boolean empty) {
@@ -114,7 +119,6 @@ public class StudyTool extends Application {
                 }
             };
         });
-        return topicMenu;
     }
     
     private HBox setSelectionMenu() {
