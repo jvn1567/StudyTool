@@ -5,6 +5,7 @@
  */
 package studytool;
 
+import javafx.scene.image.*;
 import java.io.File;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -24,24 +25,36 @@ import javafx.stage.Stage;
 public class StudyTool extends Application {
 
     private BorderPane parentPane;
+    private FlowPane mainMenu;
     private Button[] mainMenuButtons;
     private Button btnStart;
+    private Label lblWarning;
+    private ImageView imgHome;
+
+    //TODO save and load scores
+    private QuizScores quizScores;
+    
+    //TEMP
+    private boolean front;
 
     @Override
     public void start(Stage primaryStage) {
-        //panes
-        FlowPane mainMenu = setMainMenu();
+        //home image
+        Image home = new Image(getClass().getResourceAsStream(
+                "/images/tempimage.png"));
+        imgHome = new ImageView(home);
+        //main panes
+        mainMenu = setMainMenu();
         ListView topicMenuQuiz = setTopicMenu("src/multiplechoice");
         ListView topicMenuCards = setTopicMenu("src/flashcards");
-        HBox selectionMenu = setSelectionMenu();
+        VBox selectionMenu = setSelectionMenu();
         //parent pane
         parentPane = new BorderPane();
         parentPane.setTop(mainMenu);
-        parentPane.setCenter(topicMenuCards);
-        parentPane.setRight(selectionMenu);
+        parentPane.setCenter(imgHome);
         parentPane.setPadding(new Insets(20, 20, 20, 20));
         //card topic menu
-        mainMenuButtons[0].setOnAction(e->{
+        mainMenuButtons[0].setOnAction(e -> {
             parentPane.getChildren().clear();
             parentPane.setTop(mainMenu);
             parentPane.setCenter(topicMenuCards);
@@ -49,7 +62,7 @@ public class StudyTool extends Application {
             btnStart.setText("Review");
         });
         //quiz topic menu
-        mainMenuButtons[1].setOnAction(e->{
+        mainMenuButtons[1].setOnAction(e -> {
             parentPane.getChildren().clear();
             parentPane.setTop(mainMenu);
             parentPane.setCenter(topicMenuQuiz);
@@ -57,13 +70,27 @@ public class StudyTool extends Application {
             btnStart.setText("Start Quiz");
         });
         //stats menu
-        mainMenuButtons[2].setOnAction(e->{
+        mainMenuButtons[2].setOnAction(e -> {
             parentPane.getChildren().clear();
             parentPane.setTop(mainMenu);
+            //parentPane.setCenter(statsMenu);
         });
         //start button
-        btnStart.setOnAction(e->{
-            //parentPane.getChildren().remove(mainMenu);
+        btnStart.setOnAction(e -> {
+            //parentPane.getChildren().clear();
+            try {
+                if (btnStart.getText().equals("Review")) {
+                    String filename = topicMenuCards.getSelectionModel().getSelectedItem().toString();
+                    parentPane.getChildren().clear();
+                    reviewCards("./src/flashcards/" + filename + ".txt");
+                } else {
+                    String filename = topicMenuQuiz.getSelectionModel().getSelectedItem().toString();
+                    parentPane.getChildren().clear();
+                    takeQuiz(filename + ".txt");
+                }
+            } catch (NullPointerException ex) {
+                //lblWarning.setText("Nothing selected.");
+            }
         });
         //scene
         Scene scene = new Scene(parentPane, 800, 600);
@@ -105,7 +132,7 @@ public class StudyTool extends Application {
         setCellFormat(topicMenu);
         return topicMenu;
     }
-    
+
     private void setCellFormat(ListView listView) {
         listView.setCellFactory(cell -> {
             return new ListCell<String>() {
@@ -120,14 +147,90 @@ public class StudyTool extends Application {
             };
         });
     }
-    
-    private HBox setSelectionMenu() {
-        HBox selectionMenu = new HBox();
+
+    private VBox setSelectionMenu() {
+        VBox selectionMenu = new VBox();
         selectionMenu.setAlignment(Pos.CENTER);
-        btnStart = new Button("Start Quiz");
+        btnStart = new Button();
         btnStart.setFont(Font.font(16));
+        btnStart.setMinWidth(100);
         selectionMenu.setPadding(new Insets(10, 20, 10, 40));
         selectionMenu.getChildren().add(btnStart);
+        lblWarning = new Label();
+        selectionMenu.getChildren().add(lblWarning);
+        lblWarning.setPadding(new Insets(10, 0, 10, 0));
         return selectionMenu;
+    }
+
+    private void reviewCards(String filename) {
+        //initialize
+        int index = 0;
+        front = true;
+        CardSet cardDeck = new CardSet(filename);
+        //create main card button and navigation buttons
+        Button btnCardText = new Button(cardDeck.peekFront().getFront());
+        btnCardText.setFont(Font.font(36));
+        btnCardText.setMaxWidth(Double.MAX_VALUE);
+        btnCardText.setMaxHeight(Double.MAX_VALUE);
+        btnCardText.wrapTextProperty().setValue(true);
+        VBox buttonPane = new VBox();
+        buttonPane.setAlignment(Pos.CENTER);
+        String[] buttonNames = {"Flip Over", "Keep Card", "Toss Card"};
+        Button[] cardButtons = new Button[3];
+        for (int i = 1; i < 3; i++) {
+            cardButtons[i] = new Button(buttonNames[i]);
+            buttonPane.setMargin(cardButtons[i], new Insets(0, 10, 10, 10));
+            cardButtons[i].setFont(Font.font(16));
+            cardButtons[i].setMaxWidth(Double.MAX_VALUE);
+            buttonPane.getChildren().add(cardButtons[i]);
+        }
+        parentPane.getChildren().clear();
+        parentPane.setCenter(btnCardText);
+        parentPane.setRight(buttonPane);
+        //flip card
+        btnCardText.setOnAction(e->{
+            front = !front;
+            if (front) {
+                btnCardText.setText(cardDeck.peekFront().getFront());
+            } else {
+                btnCardText.setText(cardDeck.peekFront().getBack());
+            }
+        });
+        //flip button
+        btnCardText.setOnAction(e->{
+            front = !front;
+            if (front) {
+                btnCardText.setText(cardDeck.peekFront().getFront());
+            } else {
+                btnCardText.setText(cardDeck.peekFront().getBack());
+            }
+        });
+        //keep and toss TODO factor out redundancy
+        cardButtons[1].setOnAction(e->{
+            front = true;
+            cardDeck.keepFront();
+            if (cardDeck.getSize() == 0) {
+                parentPane.getChildren().clear();
+                parentPane.setTop(mainMenu);
+                parentPane.setCenter(imgHome);
+            } else {
+                btnCardText.setText(cardDeck.peekFront().getFront());
+            }
+        });
+        cardButtons[2].setOnAction(e->{
+            front = true;
+            cardDeck.tossFront();
+            if (cardDeck.getSize() == 0) {
+                parentPane.getChildren().clear();
+                parentPane.setTop(mainMenu);
+                parentPane.setCenter(imgHome);
+            } else {
+                btnCardText.setText(cardDeck.peekFront().getFront());
+            }
+        });
+    }
+
+    private void takeQuiz(String filename) {
+        //System.out.println(filename + " TEST");
     }
 }
