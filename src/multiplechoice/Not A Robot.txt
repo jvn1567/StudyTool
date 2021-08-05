@@ -9,14 +9,14 @@ Yes
 No
 
 2
-Are you a made of metal?
+Are you made of metal?
 Yes
 No
 
 2
-Are you a alive?
-Yes
+Are you alive?
 No
+Yes
 
 2
 What is your favorite number system?

@@ -21,7 +21,7 @@ class CardSet {
             while (read.hasNextLine()) {
                 String front = read.nextLine();
                 String back = read.nextLine();
-                //catches separators and just in case there is no return at end
+                //catches separators and disregards missing return at end
                 if (read.hasNextLine()) {
                     read.nextLine();
                 }

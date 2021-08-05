@@ -2,7 +2,7 @@ package studytool;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Queue;
+import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -12,7 +12,7 @@ import java.util.Scanner;
  */
 class MCQuestionSet {
 
-    private Queue<MCQuestion> questionQueue;
+    private LinkedList<MCQuestion> questionQueue;
 
     MCQuestionSet(String filename) {
         try {
@@ -25,33 +25,41 @@ class MCQuestionSet {
                 for (int i = 0; i < choiceCount; i++) {
                     choices[i] = read.nextLine();
                 }
+                //catches separators and disregards missing return at end
+                if (read.hasNextLine()) {
+                    read.nextLine();
+                }
                 questionSet.add(new MCQuestion(question, choices));
             }
             shuffleQuestions(questionSet);
+            questionQueue = new LinkedList<>();
             for (MCQuestion question : questionSet) {
                 questionQueue.add(question);
             }
         } catch (Exception ex) {
-            //TEMP TODO FINISH PLEASE
+            System.out.println("FAILED LOADING QUESTIONS");
         }
     }
 
     void shuffleQuestions(ArrayList<MCQuestion> questionSet) {
         for (int i = 0; i < questionSet.size(); i++) {
             Random rand = new Random();
-            int swap = rand.nextInt() % questionSet.size();
+            int swap = rand.nextInt(questionSet.size());
             MCQuestion temp = questionSet.get(0);
             questionSet.set(0, questionSet.get(swap));
             questionSet.set(swap, temp);
         }
     }
 
-    //TODO HANDLE NULL RETURNS ON EMPTY 
-    MCQuestion keepFront() {
+    MCQuestion peekNext() {
         return questionQueue.peek();
     }
-
-    MCQuestion tossFront() {
+    
+    MCQuestion getNext() {
         return questionQueue.poll();
+    }
+    
+    int getSize() {
+        return questionQueue.size();
     }
 }

@@ -18,6 +18,10 @@ class MCQuestion {
         shuffleChoices();
     }
     
+    String getQuestion() {
+        return question;
+    }
+    
     String getAnswer() {
         return answer;
     }
@@ -25,11 +29,11 @@ class MCQuestion {
     String[] getChoices() {
         return choices;
     }
-    
+   
     void shuffleChoices() {
         for (int i = 0; i < choices.length; i++) {
             Random rand = new Random();
-            int swap = rand.nextInt() % choices.length;
+            int swap = rand.nextInt(choices.length);
             String temp = choices[0];
             choices[0] = choices[swap];
             choices[swap] = temp;
