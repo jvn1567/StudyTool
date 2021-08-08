@@ -37,6 +37,7 @@ class MCQuestionSet {
                 questionQueue.add(question);
             }
         } catch (Exception ex) {
+            //TODO throw exception
             System.out.println("FAILED LOADING QUESTIONS");
         }
     }
