@@ -21,4 +21,11 @@ class FlashCard {
     String getBack() {
         return back;
     }
+
+    @Override
+    public String toString() {
+        return front + "\n" + back;
+    }
+    
+    
 }

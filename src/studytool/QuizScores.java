@@ -5,7 +5,10 @@
  */
 package studytool;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  *
@@ -21,6 +24,25 @@ class QuizScores {
         quizName = new ArrayList<>();
         score = new ArrayList<>();
         maxScore = new ArrayList<>();
+    }
+    
+    QuizScores(String filename) {
+        this();
+        try {
+            Scanner read = new Scanner(new File(filename));
+            while (read.hasNextLine()) {
+                String line = read.nextLine();
+                int left = line.lastIndexOf("(");
+                int mid = line.lastIndexOf("/");
+                int right = line.lastIndexOf(")");
+                int score = Integer.parseInt(line.substring(left + 1, mid));
+                int max = Integer.parseInt(line.substring(mid + 1, right));
+                add(line.substring(0, left - 2), score, max);
+            }
+        } catch (Exception ex) {
+            //no scores file found or invalid format, start with no scores
+        }
+        
     }
     
     void add(String quiz, int score, int max) {
@@ -62,9 +84,7 @@ class QuizScores {
     
     private int find(String quiz) {
         if (!quizName.isEmpty()) {
-            int temp = find(quiz, 0, quizName.size() - 1);
-            System.out.println(temp);
-            return temp;
+            return find(quiz, 0, quizName.size() - 1);
         } else {
             return 0;
         }
@@ -87,8 +107,7 @@ class QuizScores {
     public String toString() {
         String output = "";
         for (int i = 0; i < quizName.size(); i++) {
-            output += getScore(i);
-            output += maxScore.get(i) + "\n";
+            output += (getScore(i) + "\n");
         }
         return output;
     }
