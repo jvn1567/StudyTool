@@ -386,8 +386,8 @@ public class StudyTool extends Application {
         });
         cardButtons[1].setOnAction(e -> {
             front = true;
-            cardDeck.tossFront();
             btnCardText.setText(cardDeck.peekFront().getFront());
+            cardDeck.tossFront();
             cardCount.setText("Cards left: " + cardDeck.getSize());
             if (cardDeck.getSize() == 1) {
                 cardButtons[1].setText("Finish");
