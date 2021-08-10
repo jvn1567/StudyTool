@@ -7,13 +7,21 @@ import java.util.Random;
 import java.util.Scanner;
 
 /**
+ * This class represents a set of multiple choice questions in a Quiz. The
+ * questions are stored as a queue of MCQuestions in a LinkedList.
  *
- * @author John
+ * @author John Nguyen (https://github.com/jvn1567)
  */
 class MCQuestionSet {
 
     private LinkedList<MCQuestion> questionQueue;
 
+    /**
+     * Constructs a set of MCQuestion objects from the passed-in file. Questions
+     * are then shuffled and added to the queue.
+     *
+     * @param filename the file path to the text file with question data
+     */
     MCQuestionSet(String filename) {
         try {
             ArrayList<MCQuestion> questionSet = new ArrayList<>();
@@ -37,11 +45,15 @@ class MCQuestionSet {
                 questionQueue.add(question);
             }
         } catch (Exception ex) {
-            //TODO throw exception
-            System.out.println("FAILED LOADING QUESTIONS");
+            //failed loading, bad file type or invalid format
         }
     }
 
+    /**
+     * Shuffles questions in the passed-in array.
+     *
+     * @param questionSet the array to shuffle
+     */
     void shuffleQuestions(ArrayList<MCQuestion> questionSet) {
         for (int i = 0; i < questionSet.size(); i++) {
             Random rand = new Random();
@@ -52,14 +64,30 @@ class MCQuestionSet {
         }
     }
 
+    /**
+     * Returns the MCQuestion currently at the front of the queue.
+     *
+     * @return the front question
+     */
     MCQuestion peekNext() {
         return questionQueue.peek();
     }
-    
+
+    /**
+     * Returns the MCQuestion currently at the front of the queue and removes it
+     * from the queue.
+     *
+     * @return the question removed from the queue
+     */
     MCQuestion getNext() {
         return questionQueue.poll();
     }
-    
+
+    /**
+     * Returns the number of questions in the queue.
+     *
+     * @return the number of MCQuestions
+     */
     int getSize() {
         return questionQueue.size();
     }

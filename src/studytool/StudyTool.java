@@ -22,8 +22,13 @@ import static javafx.scene.text.TextAlignment.*;
 import javafx.stage.Stage;
 
 /**
+ * This class creates a JavaFX GUI that allows the user to participate in
+ * various study activities. These include reviewing flashcards, editing a
+ * personal set of flashcards, and answering questions in a multiple choice
+ * quiz. The highest scores from the quizzes taken will be tracked and saved
+ * between separate launch instances of the program.
  *
- * @author John
+ * @author John Nguyen (https://github.com/jvn1567)
  */
 public class StudyTool extends Application {
 
@@ -55,6 +60,11 @@ public class StudyTool extends Application {
     //score data
     private QuizScores quizScores;
 
+    /**
+     * Initializes all GUI elements and applies button event listeners.
+     *
+     * @param primaryStage the primary stage
+     */
     @Override
     public void start(Stage primaryStage) {
         //home image and scores
@@ -163,6 +173,13 @@ public class StudyTool extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Linearly searches for the index where a FlashCard with text matching the
+     * passed-in text is found, or -1 if none is found.
+     *
+     * @param cardText the full card text to search for (toString of the card)
+     * @return the index the card was found, or -1 if not found
+     */
     private int findCardIndex(String cardText) {
         for (int i = 0; i < customDeck.size(); i++) {
             if (cardText.equals(customDeck.get(i).toString())) {
@@ -171,7 +188,12 @@ public class StudyTool extends Application {
         }
         return -1;
     }
-    
+
+    /**
+     * Loads the user's custom FlashCard deck from its text file.
+     *
+     * @return a ListView with the front and backs of the cards listed
+     */
     private ListView loadCustomDeck() {
         ListView listCustomDeck = new ListView();
         ObservableList<String> cardList = FXCollections.observableArrayList();
@@ -195,17 +217,26 @@ public class StudyTool extends Application {
         setCellFormat(listCustomDeck);
         return listCustomDeck;
     }
-    
+
+    /**
+     * Saves the user's custom FlashCard deck to its defined text file.
+     */
     private void saveCustomDeck() {
         try (PrintWriter pw = new PrintWriter(new FileWriter(USER_DECK))) {
             for (int i = 0; i < customDeck.size(); i++) {
-                 pw.print(customDeck.get(i) + "\n\n");
+                pw.print(customDeck.get(i) + "\n\n");
             }
         } catch (IOException ex) {
             System.out.println("FAILED TO SAVE SCORES");
         }
     }
-    
+
+    /**
+     * Creates a FlowPane containing the flashcard, quiz, and score navigation
+     * buttons for the top of the window.
+     *
+     * @return a FlowPane containing the main menu buttons
+     */
     private FlowPane setMainMenu() {
         FlowPane mainMenu = new FlowPane();
         mainMenu.setAlignment(Pos.CENTER);
@@ -219,6 +250,13 @@ public class StudyTool extends Application {
         return mainMenu;
     }
 
+    /**
+     * Creates a ListView containing the filenames of all files in the passed in
+     * folder, with their extensions removed. Directories are ignored.
+     *
+     * @param folderExtension the folder to print the contents of
+     * @return a ListView of the filenames
+     */
     private ListView setTopicMenu(String folderExtension) {
         ListView topicMenu = new ListView();
         ObservableList<String> topicList = FXCollections.observableArrayList();
@@ -235,7 +273,15 @@ public class StudyTool extends Application {
         setCellFormat(topicMenu);
         return topicMenu;
     }
-    
+
+    /**
+     * Creates a VBox containing the passed-in buttons with the passed-in button
+     * names.
+     *
+     * @param buttonNames an array of strings with button names
+     * @param buttons an array of buttons
+     * @return a VBox with the buttons
+     */
     private VBox setSelectionMenu(String[] buttonNames, Button[] buttons) {
         VBox selectionMenu = new VBox();
         selectionMenu.setAlignment(Pos.CENTER);
@@ -248,6 +294,15 @@ public class StudyTool extends Application {
         return selectionMenu;
     }
 
+    /**
+     * Handles the main menus for the user to edit their custom set of
+     * FlashCards. This includes editing, removing, and adding cards.
+     *
+     * @param inputs an array of two TextField objects to input the front and
+     * back card texts into
+     * @param index the index to replace an existing card, or the max size of
+     * the custom card deck if adding.
+     */
     private void getNewCard(TextField[] inputs, int index) {
         VBox editMenu = new VBox();
         editMenu.setAlignment(Pos.CENTER);
@@ -290,7 +345,13 @@ public class StudyTool extends Application {
         parentPane.setRight(null);
         parentPane.setCenter(editMenu);
     }
-    
+
+    /**
+     * Creates buttons and menus for the user to review the CardSet they
+     * selected from the ListView
+     *
+     * @param filename the name of the CardSet file
+     */
     private void reviewCards(String filename) {
         //create main card button
         String filepath = "./src/flashcards/" + filename + ".txt";
@@ -344,6 +405,13 @@ public class StudyTool extends Application {
         cardButtons[0].fire();
     }
 
+    /**
+     * Creates buttons allowing the user to take the quiz they selected from the
+     * ListView. Scores will be updated if the user has taken a new quiz or
+     * improved an old score.
+     *
+     * @param filename the name of the quiz file
+     */
     private void takeQuiz(String filename) {
         String filepath = "./src/multiplechoice/" + filename + ".txt";
         MCQuestionSet questionSet = new MCQuestionSet(filepath);
@@ -412,6 +480,11 @@ public class StudyTool extends Application {
         btnNext.fire();
     }
 
+    /**
+     * Updates the ListView displaying quiz scores.
+     *
+     * @param statsMenu the ListView containing quiz scores
+     */
     private void updateStats(ListView statsMenu) {
         ObservableList<String> scoresList = FXCollections.observableArrayList();
         for (int i = 0; i < quizScores.getSize(); i++) {
@@ -420,7 +493,12 @@ public class StudyTool extends Application {
         statsMenu.setItems(scoresList);
         setCellFormat(statsMenu);
     }
-    
+
+    /**
+     * Updates the ListView containing custom FlashCards.
+     *
+     * @param cardMenu the ListView containing the custom FlashCards
+     */
     private void updateCards(ListView cardMenu) {
         ObservableList<String> scoresList = FXCollections.observableArrayList();
         for (int i = 0; i < customDeck.size(); i++) {
@@ -429,7 +507,17 @@ public class StudyTool extends Application {
         cardMenu.setItems(scoresList);
         setCellFormat(cardMenu);
     }
-    
+
+    /**
+     * Creates a button with the passed-in parameters. By default, buttons will
+     * be SEASHELL and be the same width as the largest object in their
+     * container.
+     *
+     * @param name the text to display on the button
+     * @param fontSize the size of the button's font
+     * @param cornerSize the size of the button's CornerRadii
+     * @return a new button with the specified parameters and defaults
+     */
     private Button createButton(String name, int fontSize, int cornerSize) {
         Button button = new Button(name);
         button.setFont(Font.font(fontSize));
@@ -440,6 +528,16 @@ public class StudyTool extends Application {
         return button;
     }
 
+    /**
+     * Creates a large button that will have all the same default settings as a
+     * normal button created in createButton(), but will also expand its height
+     * and wrap its text.
+     *
+     * @param name the text to display on the button
+     * @param fontSize the size of the button's font
+     * @param cornerSize the size of the button's CornerRadii
+     * @return a new button with the specified parameters and defaults
+     */
     private Button createBigButton(String name, int fontSize, int cornerSize) {
         Button button = createButton(name, fontSize, cornerSize);
         button.setMaxHeight(Double.MAX_VALUE);
@@ -448,12 +546,22 @@ public class StudyTool extends Application {
         return button;
     }
 
+    /**
+     * Sets the window to "Home", with nothing but the main menu on top and the
+     * initial welcome image in the center of the parent pane.
+     */
     private void returnHome() {
         parentPane.getChildren().clear();
         parentPane.setTop(mainMenu);
         parentPane.setCenter(imgHome);
     }
-    
+
+    /**
+     * Formats the cells of the passed-in ListView to have the correct font
+     * size.
+     *
+     * @param listView the ListView to reformat the cells of
+     */
     private void setCellFormat(ListView listView) {
         listView.setCellFactory(cell -> {
             return new ListCell<String>() {
